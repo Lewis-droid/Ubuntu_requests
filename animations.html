@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Web Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 30px 0 15px;
+            color: #ffdd59;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        button {
+            background: linear-gradient(to right, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Part 1: CSS3 Transitions and Animations */
+        .animated-box {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            margin: 20px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: all 0.4s ease;
+        }
+
+        .animated-box:hover {
+            transform: rotate(15deg) scale(1.1);
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff9966, #ff5e62);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .slide-in {
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Part 2: JavaScript Functions Section */
+        .function-demo {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        input {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+
+        .result {
+            font-weight: bold;
+            color: #ffdd59;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+
+        /* Part 3: Combined Animations */
+        .animation-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .animation-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            margin: 20px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .animated {
+            animation: spin 1.5s linear infinite, colorChange 3s alternate infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes colorChange {
+            0% { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+            50% { background: linear-gradient(45deg, #a1c4fd, #c2e9fb); }
+            100% { background: linear-gradient(45deg, #ffecd2, #fcb69f); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Web Experience</h1>
+            <p>Combining CSS3 animations with JavaScript interactivity</p>
+        </header>
+
+        <section class="card">
+            <h2>Part 1: CSS3 Transitions & Animations</h2>
+            <p>CSS animations and transitions create smooth, performant visual effects without JavaScript.</p>
+            
+            <div class="grid">
+                <div>
+                    <h3>Hover Transition</h3>
+                    <p>Hover over the box to see CSS transitions in action:</p>
+                    <div class="animated-box">Hover Me</div>
+                </div>
+                
+                <div>
+                    <h3>Keyframe Animation</h3>
+                    <p>This box uses CSS keyframes for continuous animation:</p>
+                    <div class="animated-box pulse">Pulse Animation</div>
+                </div>
+                
+                <div>
+                    <h3>Animation on Load</h3>
+                    <p>This box animates when the page loads:</p>
+                    <div class="animated-box slide-in">Slide In</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Part 2: JavaScript Functions</h2>
+            <p>JavaScript functions allow us to create reusable code with parameters and return values.</p>
+            
+            <div class="grid">
+                <div class="function-demo">
+                    <h3>Function Parameters</h3>
+                    <p>This function takes two parameters and returns their sum:</p>
+                    <div class="input-group">
+                        <input type="number" id="num1" placeholder="Enter first number">
+                        <input type="number" id="num2" placeholder="Enter second number">
+                    </div>
+                    <button onclick="calculateSum()">Calculate Sum</button>
+                    <div class="result" id="sumResult"></div>
+                </div>
+                
+                <div class="function-demo">
+                    <h3>String Manipulation</h3>
+                    <p>This function transforms text based on your input:</p>
+                    <div class="input-group">
+                        <input type="text" id="textInput" placeholder="Enter text">
+                    </div>
+                    <button onclick="transformText()">Transform Text</button>
+                    <div class="result" id="textResult"></div>
+                </div>
+                
+                <div class="function-demo">
+                    <h3>Scope Demonstration</h3>
+                    <p>This shows the difference between global and local variables:</p>
+                    <button onclick="scopeDemo()">Run Scope Demo</button>
+                    <div class="result" id="scopeResult"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Part 3: Combined CSS & JavaScript</h2>
+            <p>JavaScript can control CSS animations, creating dynamic interactive experiences.</p>
+            
+            <div class="animation-controls">
+                <button onclick="startAnimation()">Start Animation</button>
+                <button onclick="stopAnimation()">Stop Animation</button>
+                <button onclick="changeColor()">Change Color</button>
+                <button onclick="toggleAnimation()">Toggle Animation</button>
+            </div>
+            
+            <div class="animation-box" id="jsAnimationBox">
+                Animate Me
+            </div>
+            
+            <div class="result" id="animationStatus">Animation Status: Stopped</div>
+        </section>
+
+        <footer>
+            <p>Created with ❤️ using HTML, CSS, and JavaScript</p>
+            <p>Explore the code to understand how everything works together!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Part 2: JavaScript Functions
+        
+        // Function with parameters and return value
+        function addNumbers(a, b) {
+            // Local scope variables
+            const result = a + b;
+            return result;
+        }
+        
+        // Function to calculate and display sum
+        function calculateSum() {
+            // Get values from inputs
+            const num1 = parseFloat(document.getElementById('num1').value) || 0;
+            const num2 = parseFloat(document.getElementById('num2').value) || 0;
+            
+            // Call function with parameters
+            const sum = addNumbers(num1, num2);
+            
+            // Display result
+            document.getElementById('sumResult').textContent = `Result: ${sum}`;
+        }
+        
+        // Function to transform text
+        function transformText() {
+            const inputText = document.getElementById('textInput').value;
+            
+            if (!inputText) {
+                document.getElementById('textResult').textContent = "Please enter some text";
+                return;
+            }
+            
+            // Demonstrate different string transformations
+            const transformations = [
+                inputText.toUpperCase(),
+                inputText.split('').reverse().join(''),
+                inputText.replace(/[aeiou]/gi, '★')
+            ];
+            
+            // Randomly select a transformation
+            const randomIndex = Math.floor(Math.random() * transformations.length);
+            document.getElementById('textResult').textContent = transformations[randomIndex];
+        }
+        
+        // Global variable for scope demonstration
+        const globalVar = "I'm a global variable";
+        
+        // Function to demonstrate scope
+        function scopeDemo() {
+            // Local variable with same name as global
+            const localVar = "I'm a local variable";
+            
+            // Another local variable
+            const message = `Global: ${globalVar}, Local: ${localVar}`;
+            
+            document.getElementById('scopeResult').textContent = message;
+        }
+        
+        // Part 3: Combined CSS & JavaScript
+        
+        let isAnimating = false;
+        const animationBox = document.getElementById('jsAnimationBox');
+        const animationStatus = document.getElementById('animationStatus');
+        
+        // Function to start animation
+        function startAnimation() {
+            animationBox.classList.add('animated');
+            animationStatus.textContent = 'Animation Status: Running';
+            isAnimating = true;
+        }
+        
+        // Function to stop animation
+        function stopAnimation() {
+            animationBox.classList.remove('animated');
+            animationStatus.textContent = 'Animation Status: Stopped';
+            isAnimating = false;
+        }
+        
+        // Function to toggle animation
+        function toggleAnimation() {
+            if (isAnimating) {
+                stopAnimation();
+            } else {
+                startAnimation();
+            }
+        }
+        
+        // Function to change box color
+        function changeColor() {
+            // Generate random color
+            const hue = Math.floor(Math.random() * 360);
+            animationBox.style.background = `linear-gradient(45deg, hsl(${hue}, 70%, 60%), hsl(${hue + 40}, 70%, 60%))`;
+        }
+        
+        // Initialize page with some animations
+        window.onload = function() {
+            // Start the pulse animation on load
+            document.querySelector('.pulse').style.animationPlayState = 'running';
+            
+            // Add some random color to boxes after page load
+            setTimeout(() => {
+                changeColor();
+            }, 500);
+        };
+    </script>
+</body>
+</html>
