@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Layout with Grid & Flexbox</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #777;
+            --spacing: 1rem;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: var(--spacing) 0;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Navigation - Using Flexbox */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-toggle {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Main Layout - Using CSS Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            grid-template-areas: 
+                "sidebar-left main-content sidebar-right";
+            gap: var(--spacing);
+            padding: var(--spacing) 0;
+        }
+
+        /* Grid Areas */
+        .sidebar-left {
+            grid-area: sidebar-left;
+        }
+
+        .main-content {
+            grid-area: main-content;
+        }
+
+        .sidebar-right {
+            grid-area: sidebar-right;
+        }
+
+        /* Card Styles - Using Flexbox */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-bottom: var(--spacing);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: calc(var(--spacing) * 1.5);
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: calc(var(--spacing) * 1.5);
+        }
+
+        .card-footer {
+            padding: var(--spacing);
+            background: var(--light-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Article Cards - Using Flexbox for internal layout */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing);
+            margin-top: var(--spacing);
+        }
+
+        .article-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .article-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .article-card:hover .article-img img {
+            transform: scale(1.05);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: calc(var(--spacing) * 2) 0;
+            margin-top: calc(var(--spacing) * 2);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing);
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: calc(var(--spacing) * 2);
+            margin-top: calc(var(--spacing) * 2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Social Icons */
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design with Media Queries */
+        @media (max-width: 992px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "sidebar-left"
+                    "main-content"
+                    "sidebar-right";
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+            
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: var(--spacing);
+                background-color: var(--secondary-color);
+                width: 200px;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                padding: var(--spacing);
+                z-index: 100;
+            }
+            
+            nav ul.show {
+                display: flex;
+            }
+            
+            .article-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .card-footer {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .social-icons {
+                justify-content: center;
+            }
+        }
+
+        /* Helper Classes */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-globe"></i>
+                    <span>Layout Masters</span>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav>
+                    <ul id="nav-menu">
+                        <li><a href="#" class="active">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area with Grid -->
+    <main class="container main-grid">
+        <!-- Left Sidebar -->
+        <aside class="sidebar-left">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Categories</h3>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><a href="#">Web Design</a></li>
+                        <li><a href="#">Development</a></li>
+                        <li><a href="#">Graphic Design</a></li>
+                        <li><a href="#">UX/UI</a></li>
+                        <li><a href="#">Marketing</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Posts</h3>
+                </div>
+                <div class="card-body">
+                    <div class="post">
+                        <h4>Understanding CSS Grid</h4>
+                        <p>June 15, 2023</p>
+                    </div>
+                    <div class="post">
+                        <h4>Flexbox Best Practices</h4>
+                        <p>May 28, 2023</p>
+                    </div>
+                    <div class="post">
+                        <h4>Responsive Design Principles</h4>
+                        <p>April 12, 2023</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Welcome to Our Responsive Layout Demo</h2>
+                </div>
+                <div class="card-body">
+                    <p>This page demonstrates the use of both CSS Grid and Flexbox to create a responsive layout that works on desktop, tablet, and mobile devices.</p>
+                    
+                    <div class="article-grid">
+                        <!-- Article Cards using Flexbox -->
+                        <article class="card article-card">
+                            <div class="article-img">
+                                <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Flexbox Example">
+                            </div>
+                            <div class="card-body">
+                                <h3>Flexbox for Components</h3>
+                                <p>Flexbox is ideal for aligning content within components like cards, navigation, and small layout sections.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn">Read More</a>
+                                <div>
+                                    <i class="far fa-heart"></i> 24
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <article class="card article-card">
+                            <div class="article-img">
+                                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Grid Example">
+                            </div>
+                            <div class="card-body">
+                                <h3>Grid for Layout</h3>
+                                <p>CSS Grid is perfect for overall page layout, creating columns and rows for positioning larger sections.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn">Read More</a>
+                                <div>
+                                    <i class="far fa-heart"></i> 32
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <article class="card article-card">
+                            <div class="article-img">
+                                <img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Responsive Design">
+                            </div>
+                            <div class="card-body">
+                                <h3>Responsive Design</h3>
+                                <p>Media queries allow your layout to adapt to different screen sizes, providing optimal viewing experience.</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" class="btn">Read More</a>
+                                <div>
+                                    <i class="far fa-heart"></i> 41
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar-right">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Sign Up</h3>
+                </div>
+                <div class="card-body">
+                    <p>Subscribe to our newsletter for updates and tutorials.</p>
+                    <form>
+                        <div class="mb-2">
+                            <input type="email" placeholder="Your Email" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: var(--border-radius);">
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Popular Tags</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">CSS</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">HTML</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">JavaScript</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">Web Design</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">Responsive</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">Flexbox</span>
+                        <span style="background: #e0e0e0; padding: 0.25rem 0.5rem; border-radius: var(--border-radius);">Grid</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>We create responsive, modern web layouts using CSS Grid and Flexbox to deliver optimal user experiences across all devices.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Web Design Street</p>
+                    <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@layoutmasters.com</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <p>Stay connected with us on social media for updates and web design tips.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Layout Masters. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile navigation
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
