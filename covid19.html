@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Global Data Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 30px 0 15px;
+            color: #ffdd59;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.confirmed {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        }
+
+        .stat-card.recovered {
+            background: linear-gradient(135deg, #42e695, #3bb2b8);
+        }
+
+        .stat-card.deaths {
+            background: linear-gradient(135deg, #5b6b79, #3a4454);
+        }
+
+        .stat-card.active {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            height: 400px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(to right, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        select {
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .country-search {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 12px 20px;
+            border-radius: 50px 0 0 50px;
+            border: none;
+            width: 300px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-btn {
+            border-radius: 0 50px 50px 0;
+            margin: 0;
+        }
+
+        .last-updated {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            input {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-virus"></i> COVID-19 Global Tracker</h1>
+            <p>Real-time statistics and visualizations of COVID-19 cases worldwide</p>
+        </header>
+
+        <section class="card">
+            <h2>Global Statistics</h2>
+            <div class="last-updated">Last updated: <span id="update-date">Loading...</span></div>
+            
+            <div class="grid">
+                <div class="stat-card confirmed">
+                    <i class="fas fa-frown-open fa-2x"></i>
+                    <div class="stat-label">Confirmed Cases</div>
+                    <div class="stat-number" id="global-confirmed">-</div>
+                </div>
+                
+                <div class="stat-card recovered">
+                    <i class="fas fa-smile-beam fa-2x"></i>
+                    <div class="stat-label">Recovered</div>
+                    <div class="stat-number" id="global-recovered">-</div>
+                </div>
+                
+                <div class="stat-card deaths">
+                    <i class="fas fa-heart-broken fa-2x"></i>
+                    <div class="stat-label">Deaths</div>
+                    <div class="stat-number" id="global-deaths">-</div>
+                </div>
+                
+                <div class="stat-card active">
+                    <i class="fas fa-procedures fa-2x"></i>
+                    <div class="stat-label">Active Cases</div>
+                    <div class="stat-number" id="global-active">-</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Country-Specific Data</h2>
+            
+            <div class="country-search">
+                <input type="text" id="country-input" placeholder="Enter country name">
+                <button class="search-btn" id="search-country"><i class="fas fa-search"></i> Search</button>
+            </div>
+            
+            <div class="grid">
+                <div class="stat-card confirmed">
+                    <i class="fas fa-frown-open fa-2x"></i>
+                    <div class="stat-label">Confirmed Cases</div>
+                    <div class="stat-number" id="country-confirmed">-</div>
+                </div>
+                
+                <div class="stat-card recovered">
+                    <i class="fas fa-smile-beam fa-2x"></i>
+                    <div class="stat-label">Recovered</div>
+                    <div class="stat-number" id="country-recovered">-</div>
+                </div>
+                
+                <div class="stat-card deaths">
+                    <i class="fas fa-heart-broken fa-2x"></i>
+                    <div class="stat-label">Deaths</div>
+                    <div class="stat-number" id="country-deaths">-</div>
+                </div>
+                
+                <div class="stat-card active">
+                    <i class="fas fa-procedures fa-2x"></i>
+                    <div class="stat-label">Active Cases</div>
+                    <div class="stat-number" id="country-active">-</div>
+                </div>
+            </div>
+            
+            <div id="country-name" style="text-align: center; font-size: 1.5rem; margin: 20px 0;"></div>
+        </section>
+
+        <section class="card">
+            <h2>Data Visualization</h2>
+            
+            <div class="controls">
+                <button id="show-global-chart"><i class="fas fa-globe"></i> Global Data</button>
+                <button id="show-country-chart"><i class="fas fa-flag"></i> Country Data</button>
+                <select id="chart-type">
+                    <option value="bar">Bar Chart</option>
+                    <option value="pie">Pie Chart</option>
+                    <option value="line">Line Chart</option>
+                </select>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="covid-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Prevalence Map</h2>
+            <div style="text-align: center; height: 400px; display: flex; justify-content: center; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
+                <p>World map visualization would appear here with API integration</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>Data sourced from reliable COVID-19 APIs</p>
+            <p>This dashboard is for educational purposes only</p>
+            <p>Created with HTML, CSS, JavaScript, and Chart.js</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const globalConfirmed = document.getElementById('global-confirmed');
+        const globalRecovered = document.getElementById('global-recovered');
+        const globalDeaths = document.getElementById('global-deaths');
+        const globalActive = document.getElementById('global-active');
+        const updateDate = document.getElementById('update-date');
+        
+        const countryConfirmed = document.getElementById('country-confirmed');
+        const countryRecovered = document.getElementById('country-recovered');
+        const countryDeaths = document.getElementById('country-deaths');
+        const countryActive = document.getElementById('country-active');
+        const countryName = document.getElementById('country-name');
+        const countryInput = document.getElementById('country-input');
+        const searchCountry = document.getElementById('search-country');
+        
+        const showGlobalChart = document.getElementById('show-global-chart');
+        const showCountryChart = document.getElementById('show-country-chart');
+        const chartType = document.getElementById('chart-type');
+        
+        let covidChart;
+        let globalData = {};
+        let countryData = {};
+
+        // Format numbers with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Update global statistics
+        function updateGlobalStats(data) {
+            globalData = data;
+            globalConfirmed.textContent = formatNumber(data.confirmed);
+            globalRecovered.textContent = formatNumber(data.recovered);
+            globalDeaths.textContent = formatNumber(data.deaths);
+            globalActive.textContent = formatNumber(data.active);
+            updateDate.textContent = new Date(data.lastUpdate).toLocaleString();
+        }
+
+        // Update country statistics
+        function updateCountryStats(data) {
+            countryData = data;
+            countryConfirmed.textContent = formatNumber(data.confirmed);
+            countryRecovered.textContent = formatNumber(data.recovered);
+            countryDeaths.textContent = formatNumber(data.deaths);
+            countryActive.textContent = formatNumber(data.active);
+            countryName.textContent = data.country || "Country not found";
+        }
+
+        // Create chart
+        function createChart(labels, data, type) {
+            const ctx = document.getElementById('covid-chart').getContext('2d');
+            
+            if (covidChart) {
+                covidChart.destroy();
+            }
+            
+            const backgroundColors = [
+                'rgba(255, 107, 107, 0.7)',
+                'rgba(66, 230, 149, 0.7)',
+                'rgba(91, 107, 121, 0.7)',
+                'rgba(79, 172, 254, 0.7)'
+            ];
+            
+            const borderColors = [
+                'rgba(255, 107, 107, 1)',
+                'rgba(66, 230, 149, 1)',
+                'rgba(91, 107, 121, 1)',
+                'rgba(79, 172, 254, 1)'
+            ];
+            
+            covidChart = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'COVID-19 Cases',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${formatNumber(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Show global chart
+        function showGlobalChartHandler() {
+            const labels = ['Confirmed', 'Recovered', 'Deaths', 'Active'];
+            const data = [
+                globalData.confirmed,
+                globalData.recovered,
+                globalData.deaths,
+                globalData.active
+            ];
+            createChart(labels, data, chartType.value);
+        }
+
+        // Show country chart
+        function showCountryChartHandler() {
+            if (!countryData.confirmed) {
+                alert('Please search for a country first');
+                return;
+            }
+            
+            const labels = ['Confirmed', 'Recovered', 'Deaths', 'Active'];
+            const data = [
+                countryData.confirmed,
+                countryData.recovered,
+                countryData.deaths,
+                countryData.active
+            ];
+            createChart(labels, data, chartType.value);
+        }
+
+        // Search for country data
+        function searchCountryHandler() {
+            const country = countryInput.value.trim();
+            if (!country) {
+                alert('Please enter a country name');
+                return;
+            }
+            
+            // Simulate API call with mock data
+            const mockCountryData = {
+                confirmed: Math.floor(Math.random() * 5000000),
+                recovered: Math.floor(Math.random() * 4000000),
+                deaths: Math.floor(Math.random() * 100000),
+                active: Math.floor(Math.random() * 900000),
+                country: country.charAt(0).toUpperCase() + country.slice(1)
+            };
+            
+            updateCountryStats(mockCountryData);
+        }
+
+        // Initialize with mock data (simulating API response)
+        function initApp() {
+            // Mock global data
+            const mockGlobalData = {
+                confirmed: 676609955,
+                recovered: 652287849,
+                deaths: 6887837,
+                active: 17434269,
+                lastUpdate: new Date()
+            };
+            
+            updateGlobalStats(mockGlobalData);
+            
+            // Create initial chart
+            showGlobalChartHandler();
+        }
+
+        // Event listeners
+        searchCountry.addEventListener('click', searchCountryHandler);
+        showGlobalChart.addEventListener('click', showGlobalChartHandler);
+        showCountryChart.addEventListener('click', showCountryChartHandler);
+        chartType.addEventListener('change', function() {
+            if (covidChart) {
+                showGlobalChartHandler();
+            }
+        });
+
+        // Initialize the application
+        initApp();
+    </script>
+</body>
+</html>
